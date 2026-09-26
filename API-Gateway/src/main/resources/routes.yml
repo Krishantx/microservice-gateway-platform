@@ -1,0 +1,28 @@
+routes:
+  /profile:
+    serviceName: SAMPLE-MICROSERVICE-1
+    allowedMethods: 
+    - GET
+    - POST
+    - DELETE
+    requiredHeaders: 
+    - x-api-key
+    authRequired: true
+  
+  /product:
+    serviceName: SAMPLE-MICROSERVICE-2
+    allowedMethods: 
+    - GET
+    authRequired: false
+  
+  /order:
+    serviceName: SAMPLE-MICROSERVICE-3
+    allowedMethods: 
+    - GET
+    authRequired: false
+  
+  /authenticate:
+    serviceName: SAMPLE-MICROSERVICE-1
+    allowedMethods:
+    - POST
+    authRequired: false

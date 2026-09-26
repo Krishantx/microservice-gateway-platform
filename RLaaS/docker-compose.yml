@@ -1,0 +1,31 @@
+services:
+  rlaas:
+    build: ./
+    ports:
+      - "8085:8085"
+    networks:
+      - shared-network
+      - backend
+
+  postgres:
+    image: postgres:17
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: mfcj43ow
+      POSTGRES_DB: rlaas
+      POSTGRES_USER: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8
+    networks:
+      - backend
+networks:
+  shared-network:
+    external: true
+
+  backend:
+volumes:
+  postgres_data:

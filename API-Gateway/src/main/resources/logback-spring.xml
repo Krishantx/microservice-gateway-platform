@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Log directory -->
+    <property name="LOG_DIR" value="/app/logs"/>
+
+    <!-- ========================= -->
+    <!-- COMMON LOG PATTERN -->
+    <!-- ========================= -->
+    <property name="PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"/>
+
+    <!-- ===================================================== -->
+    <!-- APPLICATION LOG -->
+    <!-- ===================================================== -->
+
+    <appender name="APP_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/application.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- SECURITY LOG -->
+    <!-- ===================================================== -->
+
+    <appender name="SECURITY_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/security.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/security-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- ACCESS LOG -->
+    <!-- ===================================================== -->
+
+    <appender name="ACCESS_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/access.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/access-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- FRAMEWORK LOG -->
+    <!-- ===================================================== -->
+
+    <appender name="FRAMEWORK_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/framework.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/framework-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- ERROR LOG -->
+    <!-- ===================================================== -->
+
+    <appender name="ERROR_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_DIR}/error.log</file>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- YOUR APPLICATION -->
+    <!-- Change this package to your root package -->
+    <!-- ===================================================== -->
+
+    <logger name="com.krishantx.github"
+            level="INFO"
+            additivity="false">
+
+        <appender-ref ref="APP_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+
+    </logger>
+
+    <!-- ===================================================== -->
+    <!-- SECURITY LOGGER -->
+    <!-- ===================================================== -->
+
+    <logger name="SECURITY"
+            level="INFO"
+            additivity="false">
+
+        <appender-ref ref="SECURITY_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+
+    </logger>
+
+    <!-- ===================================================== -->
+    <!-- ACCESS LOGGER -->
+    <!-- ===================================================== -->
+
+    <logger name="ACCESS"
+            level="INFO"
+            additivity="false">
+
+        <appender-ref ref="ACCESS_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+
+    </logger>
+
+    <!-- ===================================================== -->
+    <!-- ROOT LOGGER (Spring, Tomcat, Eureka, etc.) -->
+    <!-- ===================================================== -->
+
+    <root level="INFO">
+
+        <appender-ref ref="FRAMEWORK_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+
+    </root>
+
+</configuration>

@@ -1,0 +1,102 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.130.0
+    container_name: otel-collector
+    command:
+      - "--config=/etc/otelcol-contrib/config.yaml"
+    volumes:
+      - ./otel/config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    restart: unless-stopped
+    networks:
+      - microservice-network
+      - shared-network
+  service-discovery:
+    build: ./Service-Discovery/
+    ports:
+      - "8081:8081"
+    networks:
+      - microservice-network
+  microservice1:
+    build: ./Microservices/Sample-Microservice-1/
+    ports:
+      - "8082:8082"
+    depends_on:
+      - service-discovery
+    networks:
+      - microservice-network
+  microservice2:
+    build: "./Microservices/Sample-Microservice-2/"
+    ports:
+      - "8083:8083"
+    depends_on:
+      - service-discovery
+    networks:
+      - microservice-network
+  microservice3:
+    build: "./Microservices/Sample-Microservice-3/"
+    ports:
+      - "8084:8084"
+    depends_on:
+      - service-discovery
+    networks:
+      - microservice-network
+  api-gateway:
+    build: "./API-Gateway/"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+      - ./otel/opentelemetry-javaagent.jar:/otel/opentelemetry-javaagent.jar
+    depends_on:
+      - service-discovery
+      - otel-collector
+    networks:
+      - shared-network
+      - microservice-network
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-}
+      RLAAS_API_KEY: ${RLAAS_API_KEY:-}
+      JAVA_TOOL_OPTIONS: >
+        -javaagent:/otel/opentelemetry-javaagent.jar
+        -Dotel.service.name=api-gateway
+        -Dotel.exporter.otlp.protocol=http/protobuf
+        -Dotel.exporter.otlp.endpoint=http://otel-collector:4318
+  rlaas:
+    build: ./RLaaS/
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - shared-network
+      - backend
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: mfcj43ow
+      POSTGRES_DB: rlaas
+      POSTGRES_USER: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  redis:
+    image: redis:8
+    networks:
+      - backend
+
+networks:
+  shared-network:
+    external: true
+  microservice-network:
+    external: false
+  backend:
+
+volumes:
+  postgres_data:

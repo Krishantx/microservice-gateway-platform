@@ -1,0 +1,10 @@
+logs/
+.agents/
+.codex/
+**/target/
+.classpath
+.project
+.settings
+.vscode
+.factorypath
+.apt_generated
